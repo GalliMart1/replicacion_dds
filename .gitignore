@@ -1,0 +1,10 @@
+# Ignorar carpeta de compilación y binarios
+build/
+
+# Ignorar bases de datos locales
+*.db
+
+# Ignorar archivos temporales de Python
+__pycache__/
+*.pyc
+

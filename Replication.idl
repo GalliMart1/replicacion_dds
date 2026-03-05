@@ -1,0 +1,36 @@
+module Replication {
+  #pragma DCPS_DATA_TYPE "Replication::DBChange"
+  struct DBChange {
+    string node_id;
+    unsigned long long timestamp;
+    string table_name;
+    string operation;
+    string primary_key;
+    string data_json;
+    string ambiente;
+  };
+
+  #pragma DCPS_DATA_TYPE "Replication::NodeHeartbeat"
+  #pragma DCPS_DATA_KEY "Replication::NodeHeartbeat node_id"
+  struct NodeHeartbeat {
+    string node_id;
+    unsigned long long uptime_ms;
+    unsigned long long timestamp;
+  };
+
+  #pragma DCPS_DATA_TYPE "Replication::SnapshotRequest"
+  struct SnapshotRequest {
+    string requester_node_id;
+    unsigned long long request_time;
+  };
+
+  #pragma DCPS_DATA_TYPE "Replication::TableSnapshot"
+  #pragma DCPS_DATA_KEY "Replication::TableSnapshot target_node_id"
+  struct TableSnapshot {
+    string target_node_id;
+    string snapshot_id;
+    string table_name;
+    string rows_json;
+    boolean last_table;
+  };
+};
