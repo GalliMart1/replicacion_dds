@@ -26,59 +26,75 @@ El sistema opera bajo un modelo **Multi-Master** descentralizado, donde cualquie
    ```bash
    git clone [https://github.com/GalliMart1/replicacion_dds.git](https://github.com/GalliMart1/replicacion_dds.git)
    cd replicacion_dds
- ```
+    ```
 
-Configurar el entorno OpenDDS:
-Asegúrate de exportar las variables de entorno de OpenDDS antes de compilar o ejecutar:
+2. **Configurar el entorno OpenDDS:**
 
-Bash
-source ~/OpenDDS/setenv.sh
-Compilar el proyecto:
+   Asegúrate de exportar las variables de entorno de OpenDDS antes de compilar o ejecutar:
+   
+    ```Bash
+   source ~/OpenDDS/setenv.sh
+    ```
 
-Bash
-mkdir build && cd build
-cmake ..
-make
-🖥️ Ejecución de los Nodos
+4. **Compilar el proyecto:**
+
+    ```Bash
+   mkdir build && cd build
+   cmake ..
+   make
+    ``` 
+
+## 🖥️ Ejecución de los Nodos
+
 Puedes levantar múltiples nodos en distintas terminales dentro de la misma máquina o en máquinas diferentes dentro de la misma red LAN. Los archivos de base de datos se crearán automáticamente en la carpeta build/.
 
-Terminal 1 (Nodo Principal):
+**Terminal 1 (Nodo Principal):**
 
-Bash
-cd build
-./DecentralizedC2 -DCPSConfigFile ../rtps.ini Consola_Principal
-Terminal 2 (Nodo Secundario):
+   ```Bash
+   cd build
+   ./DecentralizedC2 -DCPSConfigFile ../rtps.ini Consola_Principal
+```
 
-Bash
-cd build
-./DecentralizedC2 -DCPSConfigFile ../rtps.ini Radar_Proa
-📡 Simuladores Disponibles
+**Terminal 2 (Nodo Secundario):**
+
+   ```Bash
+   cd build
+   ./DecentralizedC2 -DCPSConfigFile ../rtps.ini Radar_Proa
+ ```
+
+## 📡 Simuladores Disponibles
+
 El proyecto incluye tres scripts de Python para inyectar datos en la red y probar la replicación bajo distintas cargas de trabajo. Se recomienda ejecutarlos desde la carpeta raíz del proyecto en una terminal independiente.
-
-1. Inyección Estática (simulador_radar.py):
+1. *Inyección Estática (simulador_radar.py):*
 Envía un único contacto de radar (una Fragata) en una posición fija. Ideal para comprobar que el flujo UDP -> SQLite -> DDS funciona inicialmente.
 
-Bash
+```Bash
 python3 simulador_radar.py
-2. Simulación de Movimiento Continuo (simulador_continuo.py):
+```
+
+2. *Simulación de Movimiento Continuo (simulador_continuo.py):*
 Simula el avance de un único buque, inyectando nuevas coordenadas cada 2 segundos con variaciones aleatorias para representar navegación real.
 
-Bash
+```Bash
 python3 simulador_continuo.py
-3. Simulación de Flota Táctica (simulador_flota.py):
+```
+
+3. *Simulación de Flota Táctica (simulador_flota.py):*
 La prueba de estrés principal. Despliega un arreglo de múltiples unidades (Caza F-16, Fragata Meko, Submarino TR-1700), cada una moviéndose a distintas velocidades y vectores de forma paralela y continua.
 
-Bash
+```Bash
 python3 simulador_flota.py
-🔍 Visualización de la Base de Datos
-Para verificar que los datos se están replicando y actualizando correctamente, puedes usar DB Browser for SQLite.
+```
 
+## 🔍 Visualización de la Base de Datos
+
+Para verificar que los datos se están replicando y actualizando correctamente, puedes usar DB Browser for SQLite.
 Abre el visualizador apuntando al archivo de base de datos del nodo que desees observar (ej. Consola_Principal.db):
 
-Bash
+```Bash
 sqlitebrowser build/Consola_Principal.db &
+ ``` 
 Ve a la pestaña "Browse Data" (Explorar Datos).
-
 Selecciona la tabla TRACKS en el menú desplegable.
 
-Importante: DB Browser no se actualiza automáticamente. Mientras el simulador esté corriendo, presiona F5 (o el botón de Refrescar 🔃) para ver cómo las coordenadas cambian en tiempo real.
+*Importante: DB Browser no se actualiza automáticamente. Mientras el simulador esté corriendo, presiona F5 (o el botón de Refrescar 🔃) para ver cómo las coordenadas cambian en tiempo real.*
