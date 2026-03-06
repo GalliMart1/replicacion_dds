@@ -86,15 +86,59 @@ La prueba de estrés principal. Despliega un arreglo de múltiples unidades (Caz
 python3 simulador_flota.py
 ```
 
-## 🔍 Visualización de la Base de Datos
+## 🔍 Visualización y Filtrado de Datos Tácticos (SQLite)
 
-Para verificar que los datos se están replicando y actualizando correctamente, puedes usar DB Browser for SQLite.
-Abre el visualizador apuntando al archivo de base de datos del nodo que desees observar (ej. Consola_Principal.db):
+El sistema persiste toda la situación táctica en bases de datos SQLite locales (`<Node_ID>.db`). Puedes auditar, buscar y filtrar estos datos en tiempo real de dos maneras:
+
+### Opción A: Interfaz Gráfica (DB Browser for SQLite)
+Ideal para el monitoreo visual y continuo de la operación.
+
+1. *Abre la base de datos de un nodo específico (ej. Consola Principal):*
+   ```bash
+   sqlitebrowser build/Consola_Principal.db &
+   ```
+   Ve a la pestaña Browse Data (Explorar Datos) y selecciona la tabla TRACKS o SITREP.
+
+2. *Filtrado Rápido:* Utiliza las cajas de texto en blanco situadas justo debajo de los nombres de las columnas.
+
+   *Ejemplo: Escribe HOSTIL debajo de la columna estado para ver solo las amenazas, o TRK-001 bajo id para aislar una unidad.*
+
+3. *Actualización en Vivo:* DB Browser es estático por defecto. Mientras el simulador de red esté inyectando datos, presiona la tecla F5 (o el botón 🔃) para refrescar las coordenadas en tiempo real.
+
+### Opción B: Línea de Comandos (Consola SQLite3)
+
+Ideal para consultas rápidas, búsquedas avanzadas o entornos de servidor sin interfaz gráfica.
+
+Abre una terminal e ingresa al motor SQLite del nodo:
 
 ```Bash
-sqlitebrowser build/Consola_Principal.db &
- ``` 
-Ve a la pestaña "Browse Data" (Explorar Datos).
-Selecciona la tabla TRACKS en el menú desplegable.
+sqlite3 build/Consola_Principal.db
+``` 
 
-*Importante: DB Browser no se actualiza automáticamente. Mientras el simulador esté corriendo, presiona F5 (o el botón de Refrescar 🔃) para ver cómo las coordenadas cambian en tiempo real.*
+Configura la salida para una lectura limpia en formato de tabla:
+```SQL
+.headers on
+.mode column
+```
+
+Ejemplos de Consultas Tácticas (SQL):
+
+Rastrear un ID específico:
+```SQL
+SELECT * FROM TRACKS WHERE id = 'TRK-001';
+```
+
+Filtrar por dominio operacional (ej. unidades submarinas):
+```SQL
+SELECT * FROM TRACKS WHERE ambiente = 'SUBMARINO';
+```
+
+Listar contactos hostiles ordenados por el más reciente:
+```SQL
+SELECT id, figura, lat, lon, estado FROM TRACKS WHERE estado = 'HOSTIL' ORDER BY timestamp DESC;
+```
+
+Para salir del motor SQLite, simplemente escribe:
+```SQL
+.quit
+```
